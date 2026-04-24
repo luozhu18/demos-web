@@ -1,0 +1,307 @@
+---
+// src/pages/photography/index.astro
+import Base from '../../layouts/Base.astro';
+import { Image } from 'astro:assets';
+
+// 1. 抓取图片字典
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/photography/*.{jpeg,jpg,png,webp,JPG,JPEG}', 
+  { eager: true }
+);
+
+// 2. 【在此处配置你的项目】 (保持你之前的配置)
+const projectSettings = [
+  {
+    name: "HELE SQUARE",
+    continent: "ASIA",
+    imageNames: ["HELE SQUARE (2).JPG", "HELE SQUARE (3).JPG", "HELE SQUARE (4).JPG", "HELE SQUARE.JPG"] 
+  },
+  {
+    name: "JINHAI BRIDGE",
+    continent: "ASIA",
+    imageNames: ["JINHAI BRIDGE (1).JPG", "JINHAI BRIDGE (2).JPG", "JINHAI BRIDGE (3).JPG"]
+  },
+  {
+    name: "SETO INLAND SEA",
+    continent: "ASIA",
+    imageNames: ["GLASS STAIR (1).jpg", "GLASS STAIR (2).jpg", "TIME AISLE (1).jpg", "TIME AISLE (2).jpg", "TIME AISLE (3).jpg"]
+  }
+];
+
+// 3. 数据预处理
+const flattenedPhotos = projectSettings.flatMap((project) => {
+  return project.imageNames.map((fileName, index) => {
+    const fullPath = `/src/assets/photography/${fileName}`;
+    const imageObj = allImages[fullPath];
+
+    if (!imageObj) {
+      console.warn(`[缺图警告] 找不到文件: ${fullPath}，请检查文件名大小写是否一致。`);
+      return null;
+    }
+
+    const photoId = `${project.name.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+
+    return {
+      id: photoId,
+      src: imageObj.default,
+      caption: project.name,
+      continent: project.continent,
+      // overlayLeft: `[Project]`, // 此项已废弃，无需配置
+      // overlayRight: '01 Materials\n...' // 此项已废弃，无需配置
+    };
+  });
+}).filter(p => p !== null);
+
+// 4. 为所有成功加载的照片生成连贯的 displayId (001, 002)
+const photos = flattenedPhotos.map((photo, index) => ({
+  ...photo,
+  displayId: String(index + 1).padStart(3, '0')
+}));
+
+// 5. 提取目录数据结构
+const CONTINENTS = ['ASIA', 'EUROPE', 'NORTH AMERICA', 'AFRICA', 'OCEANIA', 'SOUTH AMERICA'];
+const groupedProjects = CONTINENTS.map(continent => {
+  const uniqueProjectNames = [...new Set(
+    photos.filter(p => p.continent === continent).map(p => p.caption)
+  )];
+
+  return {
+    continent,
+    projects: uniqueProjectNames.map(name => {
+      const firstPhoto = photos.find(p => p.caption === name);
+      return {
+        name,
+        targetId: firstPhoto?.id
+      };
+    })
+  };
+}).filter(group => group.projects.length > 0);
+---
+
+<Base title="Photography - DEMOS.">
+  <main class="photography-page-container">
+    
+    <nav class="photo-directory">
+      <div class="directory-header">INDEX / LOCATIONS</div>
+      <div class="directory-columns">
+        {groupedProjects.map(group => (
+          <div class="directory-group">
+            <h2 class="continent-title">{group.continent}</h2>
+            <ul class="project-list">
+              {group.projects.map(project => (
+                <li>
+                  <a href={`#${project.targetId}`} class="project-link">
+                    <span class="link-name">{project.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </nav>
+
+    <section class="in-place-grid" id="photo-grid">
+      {photos.map((photo) => (
+        <div class="grid-item" id={photo.id}>
+          <div class="image-wrapper">
+            <Image 
+              src={photo.src} 
+              alt={photo.caption} 
+              class="photo-content" 
+              width={1600} 
+              format="webp" 
+              quality={85} 
+            />
+            
+            <div class="detail-overlay">
+              
+              <div class="overlay-top-left">
+                <div class="project-identity">
+                  <span class="photo-id">{photo.displayId}</span>
+                  <span class="photo-name">{photo.caption}</span>
+                </div>
+              </div>
+
+              <div class="overlay-top-right">
+                <div class="location-tag">{photo.continent}</div>
+                </div>
+
+              <div class="corner-bracket tl"></div>
+              <div class="corner-bracket tr"></div>
+              <div class="corner-bracket bl"></div>
+              <div class="corner-bracket br"></div>
+            </div>
+          </div>
+          
+          </div>
+      ))}
+    </section>
+  </main>
+</Base>
+
+<style>
+  .photography-page-container {
+    width: 100%;
+    padding: 180px var(--space-md) 5rem var(--space-md);
+    container-type: inline-size; 
+  }
+
+  .photo-directory { margin-bottom: 6rem; font-family: monospace; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .directory-header { border-bottom: 1px solid var(--color-fg); padding-bottom: 8px; margin-bottom: 2rem; font-weight: bold; width: 100%; color: var(--color-muted); }
+  .directory-columns { display: flex; flex-wrap: wrap; gap: 4rem; }
+  .directory-group { display: flex; flex-direction: column; min-width: 120px; }
+  .continent-title { font-size: 11px; font-weight: bold; color: var(--color-fg); margin-bottom: 1rem; }
+  .project-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .project-link { color: var(--color-fg); opacity: 0.4; transition: opacity 0.2s ease, transform 0.2s ease; }
+  .project-link:hover { opacity: 1; transform: translateX(4px); }
+
+  .in-place-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: calc(((100cqw - 5px) / 6) * 1.25);
+    gap: 1px; 
+    background-color: var(--color-line, #e0e0e0);
+    border: 1px solid var(--color-line, #e0e0e0);
+    grid-auto-flow: dense; 
+  }
+
+  .grid-item {
+    background-color: var(--color-bg, #ffffff);
+    grid-column: span 1;
+    grid-row: span 1;
+    position: relative;
+    cursor: none; 
+    transition: transform 0.1s ease;
+    scroll-margin-top: 200px;
+  }
+  .grid-item:active { transform: scale(0.98); }
+
+  .image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: #f4f4f4; }
+  .photo-content { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; }
+
+  .grid-item.is-expanded { grid-column: span 4; grid-row: span 2; }
+
+  /* =========================================
+     沉浸式 Overlay 排版 (都在照片内部)
+     ========================================= */
+/* =========================================
+     核心修复：默认完全透明，只有放大时才浮现
+     ========================================= */
+  .detail-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    
+    font-family: monospace; font-size: 11px; letter-spacing: 0.05em;
+    color: #fff; mix-blend-mode: difference; z-index: 10;
+    pointer-events: none; /* 防止遮挡点击 */
+    
+    /* 👇 关键的两行代码：默认隐藏，加入平滑过渡动画 👇 */
+    opacity: 0; 
+    transition: opacity 0.4s ease; 
+  }
+
+  /* 👇 关键逻辑：当卡片被添加 is-expanded 类名（被点击展开）时，透明度变为 1 👇 */
+  .grid-item.is-expanded .detail-overlay {
+    opacity: 1;
+  }
+
+  /* 左上角组 */
+  .overlay-top-left { display: flex; flex-direction: column; gap: 4px; }
+  .project-identity { display: flex; gap: 10px; font-weight: bold; text-transform: uppercase;}
+  .photo-id { opacity: 0.6; }
+  /* [Project] 样式已注销 */
+
+  /* 右上角组 */
+  .overlay-top-right { text-align: right; display: flex; flex-direction: column; gap: 10px; }
+  .location-tag {
+    background: #fff; color: #000; mix-blend-mode: normal;
+    padding: 2px 6px; font-weight: bold; display: inline-block;
+    align-self: flex-end; border-radius: 1px;
+  }
+  /* data-list 样式已废弃 */
+
+  /* 准星 */
+  .corner-bracket { position: absolute; width: 12px; height: 12px; border: 1px solid #fff; opacity: 0; transition: opacity 0.3s; }
+  .grid-item.is-expanded .corner-bracket { opacity: 0.8; }
+  .tl { top: 15px; left: 15px; border-right: 0; border-bottom: 0; }
+  .tr { top: 15px; right: 15px; border-left: 0; border-bottom: 0; }
+  .bl { bottom: 15px; left: 15px; border-right: 0; border-top: 0; }
+  .br { bottom: 15px; right: 15px; border-left: 0; border-top: 0; }
+
+  @media (max-width: 1024px) {
+    .in-place-grid { 
+      grid-template-columns: repeat(4, 1fr); 
+      grid-auto-rows: calc(((100cqw - 3px) / 4) * 1.25);
+    }
+    .grid-item.is-expanded { grid-column: span 4; grid-row: span 2; }
+    .detail-overlay { padding: 12px; }
+  }
+</style>
+
+<script is:inline>
+  const initPhotography = () => {
+    const grid = document.getElementById('photo-grid');
+    if (!grid) return;
+
+    // 1. 黑圆点交互
+    grid.addEventListener('mouseover', (e) => {
+      const cursor = document.getElementById('global-cursor');
+      if (e.target.closest('.grid-item') && cursor) {
+        cursor.style.width = '40px';
+        cursor.style.height = '40px';
+        cursor.style.mixBlendMode = 'difference';
+        cursor.style.backgroundColor = '#fff';
+      }
+    });
+
+    grid.addEventListener('mouseout', (e) => {
+      const cursor = document.getElementById('global-cursor');
+      if (e.target.closest('.grid-item') && cursor) {
+        cursor.style.width = '12px';
+        cursor.style.height = '12px';
+        cursor.style.mixBlendMode = 'normal';
+        cursor.style.backgroundColor = '#000';
+      }
+    });
+
+    // 2. 点击推挤放大
+    grid.addEventListener('click', (e) => {
+      const item = e.target.closest('.grid-item');
+      if (!item) return;
+
+      const isExpanded = item.classList.contains('is-expanded');
+
+      // 关闭当前所有已展开项
+      document.querySelectorAll('.grid-item.is-expanded').forEach(el => {
+        el.classList.remove('is-expanded');
+      });
+
+      if (!isExpanded) {
+        item.classList.add('is-expanded');
+        // 延迟滚动居中
+        setTimeout(() => {
+          item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    });
+
+    // 3. 目录联动
+    document.querySelectorAll('.project-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const targetId = link.getAttribute('href').substring(1);
+        const targetItem = document.getElementById(targetId);
+        if (targetItem) {
+          document.querySelectorAll('.grid-item.is-expanded').forEach(el => el.classList.remove('is-expanded'));
+          targetItem.classList.add('is-expanded');
+        }
+      });
+    });
+  };
+
+  initPhotography();
+  document.addEventListener('astro:page-load', initPhotography);
+</script>

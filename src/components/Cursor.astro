@@ -1,0 +1,76 @@
+---
+// src/components/Cursor.astro
+// 圆点光标组件 - 无延迟跟随，完美适配 Astro
+---
+
+<div id="custom-cursor" class="custom-cursor"></div>
+
+<style is:global>
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background-color: var(--color-fg);
+    border-radius: 50%;
+    pointer-events: none; /* 确保不阻挡鼠标点击 */
+    z-index: 9999;
+    
+    /* 使用 transform 居中光标，动画性能远好于 margin 负值 */
+    transform: translate(-50%, -50%);
+    
+    /* 关键：只对形状变化做过渡，不对 transform(位移) 做过渡，实现零延迟跟随 */
+    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, border 0.2s ease;
+    will-change: transform, width, height;
+  }
+
+  /* 悬停在交互元素上时的空心大圆状态 */
+  .custom-cursor.is-hover {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border: 8px solid var(--color-fg);
+  }
+
+  /* 移动端(触摸屏)自动隐藏自定义光标 */
+  @media (pointer: coarse) {
+    .custom-cursor {
+      display: none !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  const cursor = document.getElementById('custom-cursor');
+
+  if (cursor) {
+    // 1. 无延迟跟随逻辑
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+    });
+
+    // 2. 完美的悬停检测 (事件委托)
+    // 无论链接是立刻加载的，还是未来通过其他方式添加的，都能完美触发
+    document.addEventListener('mouseover', (e) => {
+      // 检查鼠标当前悬停的元素，或者它的父级是不是 a, button 等交互元素
+      if (e.target.closest('a, button, [data-hover]')) {
+        cursor.classList.add('is-hover');
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('a, button, [data-hover]')) {
+        cursor.classList.remove('is-hover');
+      }
+    });
+
+    // 3. 鼠标离开浏览器窗口时隐藏光标
+    document.addEventListener('mouseleave', () => {
+      cursor.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', () => {
+      cursor.style.opacity = '1';
+    });
+  }
+</script>

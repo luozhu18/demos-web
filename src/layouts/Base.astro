@@ -1,0 +1,150 @@
+---
+// src/layouts/Base.astro
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  isHome?: boolean;
+}
+
+const { title, isHome = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+    
+    <style is:global>
+      :root {
+        --color-bg: #ffffff;
+        --color-fg: #000000;
+        --color-muted: #666666;
+        --space-md: 2rem;
+        --space-sm: 1rem;
+        --nav-height: 120px;
+      }
+
+      /* 只在支持精准鼠标的设备上隐藏原生鼠标 */
+      @media (pointer: fine) {
+        * { cursor: none !important; }
+      }
+      
+      /* 🌟 核心：原生等宽字体，零延迟加载 🌟 */
+      html, body { 
+        margin: 0; 
+        padding: 0; 
+        font-family: monospace; 
+        background-color: var(--color-bg); 
+        color: var(--color-fg); 
+        box-sizing: border-box; 
+      }
+      
+      *, *::before, *::after { box-sizing: inherit; }
+      a { text-decoration: none; color: inherit; }
+
+      /* 针对大标题优化字母间距，让等宽字体更紧凑硬朗 */
+      h1, h2, h3, .brand-name {
+        letter-spacing: -0.05em;
+      }
+
+      #global-cursor {
+        position: fixed;
+        top: 0; left: 0;
+        width: 12px; height: 12px;
+        background-color: #000;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 999999;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, background-color 0.2s;
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        #global-cursor { display: none !important; }
+      }
+
+      .global-sticky-nav {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: var(--nav-height);
+        background-color: transparent; 
+        display: flex; justify-content: space-between; align-items: flex-start;
+        padding: 2.5rem var(--space-md) 0 var(--space-md);
+        z-index: 1000;
+        pointer-events: none;
+      }
+      .nav-left, .nav-right { pointer-events: auto; }
+      .brand-group { display: flex; flex-direction: column; }
+      .brand-name { font-size: 3.5rem; font-weight: 700; line-height: 0.85; }
+      .brand-subtitle { font-size: 1rem; letter-spacing: 0.12em; color: var(--color-muted); text-transform: uppercase; margin-top: 8px; }
+      .nav-right { display: flex; gap: 0.8rem; margin-top: 0.4rem; }
+      .nav-pill {
+        font-size: 1srem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+        border: 1px solid var(--color-fg); border-radius: 999px;
+        padding: 0.5rem 1.2rem; transition: all 0.3s ease; background-color: #fff;
+      }
+      .nav-pill:hover { background-color: var(--color-fg); color: #fff; }
+    </style>
+  </head>
+  <body>
+    <div id="global-cursor"></div>
+    
+    {!isHome && (
+      <nav class="global-sticky-nav">
+        <div class="nav-left">
+          <a href="/" class="brand-group">
+            <span class="brand-name">DEMOS.</span>
+            <span class="brand-subtitle">DEMOSTRATE, DEMOLISH, "DEMOS".</span>
+          </a>
+        </div>
+        <div class="nav-right">
+          <a href="/architecture" class="nav-pill">ARCHITECTURE</a>
+          <a href="/photography" class="nav-pill">PHOTOGRAPHY</a>
+          <a href="/writings" class="nav-pill">WRITINGS</a>
+          <a href="/contact" class="nav-pill">CONTACT</a>
+        </div>
+      </nav>
+    )}
+
+    <slot />
+
+    <script is:inline>
+      document.addEventListener('mousemove', (e) => {
+        const cursor = document.getElementById('global-cursor');
+        if (cursor) {
+          cursor.style.left = e.clientX + 'px';
+          cursor.style.top = e.clientY + 'px';
+        }
+      });
+
+      const initCursorEffects = () => {
+        document.querySelectorAll('a, button').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            const cursor = document.getElementById('global-cursor');
+            if(cursor) {
+              cursor.style.width = '30px';
+              cursor.style.height = '30px';
+              cursor.style.mixBlendMode = 'difference';
+              cursor.style.backgroundColor = '#fff';
+            }
+          });
+          el.addEventListener('mouseleave', () => {
+            const cursor = document.getElementById('global-cursor');
+            if(cursor) {
+              cursor.style.width = '12px';
+              cursor.style.height = '12px';
+              cursor.style.mixBlendMode = 'normal';
+              cursor.style.backgroundColor = '#000';
+            }
+          });
+        });
+      };
+
+      initCursorEffects();
+      document.addEventListener('astro:page-load', initCursorEffects);
+    </script>
+  </body>
+</html>

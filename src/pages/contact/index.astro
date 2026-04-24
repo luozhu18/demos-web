@@ -1,0 +1,154 @@
+---
+// src/pages/contact.astro
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="CONTACT - DEMOS. ARCHIVE">
+  <main class="contact-page-wrapper">
+    
+    <section class="mega-title-section">
+      <h1 class="mega-title">DEMOS.</h1>
+      <div class="cut-line top-line"></div>
+      <div class="cut-line bottom-line"></div>
+    </section>
+
+    <section class="bottom-archive-section">
+      
+      <p class="system-log">
+        ORBITAL STATION LOGGING PROTOCOL. DAILY REPETITION ENSURES STRUCTURAL INTEGRITY. ALL DATA IS RECORDED AND ARCHIVED IN PERPETUITY. MAINTAIN TRAJECTORY.
+        <span style="float: right;">&rarr;</span>
+      </p>
+
+      <div class="archive-table">
+        <div class="contact-cell">
+          <h2 class="contact-title">CONTACT<br>MANIFEST</h2>
+          <div class="contact-details">
+            <div class="detail-item">
+              <span class="label">NAME :</span>
+              <span class="value">[ WANG YIRAN ]</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">EMAIL :</span>
+              <span class="value">[ demiarchi18@163.com ]</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">INSTAGRAM :</span>
+              <span class="value">@s</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-cell">
+          <div class="table-row table-header">
+            <div class="col-main">PARAMETER / TARGET</div>
+            <div class="col-sm">M</div>
+            <div class="col-sm">T</div>
+            <div class="col-sm">W</div>
+            <div class="col-sm">YLD</div>
+          </div>
+          
+          <div class="table-row">
+            <div class="col-main">COMMUNICATION UPLINK</div>
+            <div class="col-sm">■</div><div class="col-sm">■</div><div class="col-sm">□</div>
+            <div class="col-sm">.98</div>
+          </div>
+          
+          <div class="table-row">
+            <div class="col-main">COORDINATE SYNC</div>
+            <div class="col-sm">■</div><div class="col-sm">□</div><div class="col-sm">■</div>
+            <div class="col-sm">.42</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .contact-page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 180px var(--space-md) 5rem var(--space-md);
+    background-color: #f4f4f4;
+  }
+
+  .mega-title-section {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .mega-title {
+    font-size: clamp(5rem, 20vw, 25rem);
+    font-weight: 900;
+    line-height: 0.8;
+    margin: 0;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+    color: #000;
+  }
+
+  .cut-line {
+    position: absolute;
+    left: 0; width: 100%; height: 1.2vw;
+    background-color: #f4f4f4;
+    z-index: 1;
+  }
+  .top-line { top: 38%; }
+  .bottom-line { top: 62%; }
+
+  .system-log {
+    max-width: 600px;
+    font-size: 11px;
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    font-family: monospace;
+  }
+
+  .archive-table {
+    display: flex;
+    width: 100%;
+    border: 1px solid #000;
+    font-family: monospace;
+  }
+
+  .contact-cell {
+    flex: 1;
+    padding: 2.5rem;
+    border-right: 1px solid #000;
+  }
+
+  .contact-title {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 0.9;
+    margin: 0 0 3rem 0;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .detail-item { display: flex; gap: 1rem; font-size: 13px; }
+  .label { color: #666; }
+
+  .nav-cell { flex: 1.5; display: flex; flex-direction: column; }
+  .table-row { display: flex; border-bottom: 1px solid #000; }
+  .table-row:last-child { border-bottom: none; }
+  .table-header { font-weight: bold; background: #eee; }
+  
+  .col-main { flex: 2; padding: 1rem; border-right: 1px solid #000; }
+  .col-sm { flex: 0.4; padding: 1rem; border-right: 1px solid #000; text-align: center; }
+  .col-sm:last-child { border-right: none; }
+
+  @media (max-width: 1024px) {
+    .archive-table { flex-direction: column; }
+    .contact-cell { border-right: none; border-bottom: 1px solid #000; }
+    .mega-title { font-size: 15vw; }
+  }
+</style>

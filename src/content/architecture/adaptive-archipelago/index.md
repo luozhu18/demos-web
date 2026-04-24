@@ -1,0 +1,12 @@
+---
+id: "02"
+name: "ADAPTIVE ARCHIPELAGO"
+type: "ROOF FACTORY"
+title: "ADAPTIVE ARCHIPELAGO"
+description: "The design envisions a series of modular, adaptable structures that serve various functions within urban environments. Each “island” or module can be tailored to host different activities, such as markets, performances, workshops, or relaxation areas."
+coverImage: "./cover.jpg"
+---
+
+In recent years, Changsin-dong has faced challenges as industries have moved or evolved, leaving parts of the community struggling with economic shifts. Throughout Changsin-dong’s history, its function and lifestyle have consistently been shaped by the authorities of each era. Whether it was quarrying period, the rise of the garment industry, or its current state of being neglected. Even though urban regeneration focuses on bottom-up approaches to address the shortcomings of developmentalism, hierarchical power dynamics between governmental administrations and local cooperatives continue to exist. In South Korea, many urban villages face this kind of predicament. This project aims to provide a renewal strategy for these low-rise, small-scale architecture areas that need to preserve their culture and memories.
+This project comes from the concept of “archipelago” mentioned by Stavros in Common Space, that reimagines public spaces as interconnected islands of activity and community engagement. The design envisions a series of modular, adaptable structures that serve various functions within urban environments. Each “island” or module can be tailored to host different activities, such as markets, performances, workshops, or relaxation areas.
+Rooftop in Korea always have the expression of chasing dream and are popular among young people due to their affordability and the chance to customize their own space. Rooftops, just like the urban archipelago, might be the most appropriate place for bottom-up mode of construction and management. The project aims to create an architectural system that changes function over time and site, including workshops, inhabitation, exhibitions, which can consistently provide the area with youthful vitality at different times. Incorporating the history and left-over of the area, penetrating into the city, allowing the spaces to evolve with the community’s needs.

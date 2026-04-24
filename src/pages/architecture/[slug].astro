@@ -1,0 +1,225 @@
+---
+// src/pages/architecture/[slug].astro
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+
+export async function getStaticPaths() {
+  const architectureEntries = await getCollection('architecture');
+  return architectureEntries.map(entry => ({
+    params: { slug: entry.id }, 
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+// 自动扫描并过滤当前项目的图片 (排除 cover.jpg)
+const allImages = import.meta.glob<{ default: ImageMetadata }>('/src/content/architecture/**/*.{jpeg,jpg,png,webp,JPG,JPEG}');
+const projectImageResolvers = Object.entries(allImages)
+  .filter(([path]) => path.includes(`/src/content/architecture/${entry.id}/`))
+  .filter(([path]) => !path.endsWith('cover.jpg')) 
+  .map(([path, resolver]) => resolver());
+
+const galleryImages = await Promise.all(projectImageResolvers);
+---
+
+<Base title={`${entry.data.name} - DEMOS.`}>
+  <main class="detail-container">
+    <div class="ticket-group-detail">
+      
+      <div class="ticket-outer-border">
+        <div class="ticket-inner-bg top-part-detail">
+          
+          <div class="card-header-detail text-label">
+            <span>FIG {String(entry.data.id).padStart(2, '0')} <br/> {entry.data.name}</span>
+            <span class="text-right">SYS. CONNECT <br/> {entry.data.type}</span>
+          </div>
+
+          <div class="main-image-wrapper">
+            <div class="corner-bracket tl"></div>
+            <div class="corner-bracket tr"></div>
+            <div class="corner-bracket bl"></div>
+            <div class="corner-bracket br"></div>
+            
+            {entry.data.coverImage && (
+              <Image 
+  src={entry.data.coverImage} 
+  alt={entry.data.name} 
+  class="detail-main-img" 
+  width={1920} 
+  format="webp" 
+  quality={80} 
+/>
+            )}
+          </div>
+          
+          <div class="project-intro">
+            <h1 class="project-title-large">{entry.data.title}</h1>
+            <p class="project-desc-large">{entry.data.description}</p>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="ticket-gap"></div>
+
+      <div class="ticket-outer-border">
+        <div class="ticket-inner-bg bottom-part-detail">
+          
+          <div class="prose">
+            <Content />
+          </div>
+
+          {galleryImages.length > 0 && (
+            <div class="auto-gallery">
+              {galleryImages.map((img, index) => (
+                <div class="gallery-item">
+                  <div class="corner-bracket tl"></div>
+                  <div class="corner-bracket tr"></div>
+                  <div class="corner-bracket bl"></div>
+                  <div class="corner-bracket br"></div>
+                  
+                  <Image <Image 
+  src={img.default} 
+  alt={`Detail ${index + 1}`} 
+  class="gallery-img" 
+  width={1920} 
+  format="webp" 
+  quality={80} 
+/>
+                  
+                  <div class="gallery-caption">
+                     FIG {String(entry.data.id).padStart(2, '0')}.{String(index + 1).padStart(2, '0')}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div class="footer-dots">············</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Base>
+
+<style>
+  .detail-container {
+    width: 80%;
+    /* 核心修复：第一个值 180px 就是顶部的安全距离，和目录页保持绝对一致 */
+    padding: 180px var(--space-md) 5rem var(--space-md); 
+    margin: 0 auto;
+  }
+
+  .ticket-group-detail { display: flex; flex-direction: column; }
+  .ticket-gap { height: 12px; } /* 撕裂缝隙 */
+
+  /* 双层倒角边框 */
+  .ticket-outer-border {
+    background-color: var(--color-fg);
+    padding: 1px;
+    clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 15px, 100% calc(100% - 15px), calc(100% - 15px) 100%, 15px 100%, 0 calc(100% - 15px), 0 15px);
+  }
+  .ticket-inner-bg {
+    background-color: var(--color-bg);
+    clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+  }
+
+  /* 顶部 Header */
+  .card-header-detail {
+    display: flex; justify-content: space-between;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-fg);
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     核心修复 1：封面图适应比例
+     ========================================= */
+  .main-image-wrapper { 
+    position: relative; 
+    margin: var(--space-md); 
+    padding: 15px; 
+    /* 去掉了所有固定高度或比例限制 */
+  }
+  .detail-main-img { 
+    width: 100%; 
+    height: auto; /* 绝对尊重原始比例 */
+    display: block; 
+    border: 1px solid #eee; /* 可选的极其微弱的内边框 */
+  }
+
+  /* 四角准星 */
+  .corner-bracket { position: absolute; width: 20px; height: 20px; border: 1px solid var(--color-fg); }
+  .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+  .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+  .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+  .br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+  /* 第一票根的收尾区域：标题与描述 */
+  .project-intro { 
+    padding: 0 var(--space-md) var(--space-md) var(--space-md); 
+  }
+  .project-title-large { 
+    font-size: 2.5rem; 
+    font-weight: 500; 
+    margin-bottom: 1rem; 
+    text-transform: uppercase; 
+    line-height: 1.1;
+  }
+  .project-desc-large { 
+    font-size: 1.1rem; 
+    color: var(--color-muted); 
+    max-width: 80%; 
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     核心修复 2：画廊图纸自然排版
+     ========================================= */
+  .bottom-part-detail { padding: var(--space-md); min-height: 400px; }
+  .prose {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: var(--space-xl);
+    
+    /* 核心修改：强制左对齐 */
+    text-align: left; 
+    
+    /* 核心修改：保护文字阅读体验 */
+    max-width: 900px; /* 单独限制文字的最宽范围，保证眼睛舒服。下方的图片不受此限制，依然会满宽 */
+  }
+  .auto-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl); /* 每张图纸之间的呼吸空间 */
+  }
+
+  .gallery-item {
+    position: relative;
+    padding: 15px; /* 给准星留出空间 */
+    /* 不设高度，完全由内部图片撑开 */
+  }
+
+  .gallery-img {
+    width: 100%; /* 占满容器宽度 */
+    height: auto; /* 高度根据宽度自动等比缩放，绝不裁剪 */
+    display: block;
+    background-color: #fcfcfc; /* 防止透明 PNG 显示突兀 */
+  }
+
+  .gallery-caption {
+    margin-top: 10px;
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: var(--color-muted);
+    text-align: right;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-dots { text-align: center; opacity: 0.2; letter-spacing: 10px; margin-top: 3rem; }
+</style>s
