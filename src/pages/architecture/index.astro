@@ -197,10 +197,15 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
     margin-bottom: 1.5em;
   }
   .project-desc {
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-    margin: 0;
-    line-height: 1.4;
+    font-size: 0.75rem; 
+    line-height: 1.5;
+    /* 2. 强制两端对齐，形成完美的方块 */
+    text-align: justify;
+    text-justify: inter-word; /* 告诉浏览器优先拉伸单词之间的空格 */
+    
+    /* 3. 开启自动连字符（极度重要！防止等宽字体出现巨大牙缝） */
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
   
   .more-dots {
