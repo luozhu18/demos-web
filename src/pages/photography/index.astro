@@ -9,7 +9,7 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 
-// 2. 【在此处配置你的项目】 (保持你之前的配置)
+// 2. 项目配置
 const projectSettings = [
   {
     name: "HELE SQUARE",
@@ -46,13 +46,11 @@ const flattenedPhotos = projectSettings.flatMap((project) => {
       src: imageObj.default,
       caption: project.name,
       continent: project.continent,
-      // overlayLeft: `[Project]`, // 此项已废弃，无需配置
-      // overlayRight: '01 Materials\n...' // 此项已废弃，无需配置
     };
   });
 }).filter(p => p !== null);
 
-// 4. 为所有成功加载的照片生成连贯的 displayId (001, 002)
+// 4. 为所有成功加载的照片生成连贯的 displayId
 const photos = flattenedPhotos.map((photo, index) => ({
   ...photo,
   displayId: String(index + 1).padStart(3, '0')
@@ -115,7 +113,6 @@ const groupedProjects = CONTINENTS.map(continent => {
             />
             
             <div class="detail-overlay">
-              
               <div class="overlay-top-left">
                 <div class="project-identity">
                   <span class="photo-id">{photo.displayId}</span>
@@ -125,7 +122,7 @@ const groupedProjects = CONTINENTS.map(continent => {
 
               <div class="overlay-top-right">
                 <div class="location-tag">{photo.continent}</div>
-                </div>
+              </div>
 
               <div class="corner-bracket tl"></div>
               <div class="corner-bracket tr"></div>
@@ -133,8 +130,7 @@ const groupedProjects = CONTINENTS.map(continent => {
               <div class="corner-bracket br"></div>
             </div>
           </div>
-          
-          </div>
+        </div>
       ))}
     </section>
   </main>
@@ -147,15 +143,17 @@ const groupedProjects = CONTINENTS.map(continent => {
     container-type: inline-size; 
   }
 
+  /* 目录样式 */
   .photo-directory { margin-bottom: 6rem; font-family: monospace; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
   .directory-header { border-bottom: 1px solid var(--color-fg); padding-bottom: 8px; margin-bottom: 2rem; font-weight: bold; width: 100%; color: var(--color-muted); }
   .directory-columns { display: flex; flex-wrap: wrap; gap: 4rem; }
   .directory-group { display: flex; flex-direction: column; min-width: 120px; }
   .continent-title { font-size: 11px; font-weight: bold; color: var(--color-fg); margin-bottom: 1rem; }
   .project-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
-  .project-link { color: var(--color-fg); opacity: 0.4; transition: opacity 0.2s ease, transform 0.2s ease; }
+  .project-link { color: var(--color-fg); opacity: 0.4; transition: opacity 0.2s ease, transform 0.2s ease; text-decoration: none; }
   .project-link:hover { opacity: 1; transform: translateX(4px); }
 
+  /* 网格核心布局 */
   .in-place-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -176,55 +174,35 @@ const groupedProjects = CONTINENTS.map(continent => {
     scroll-margin-top: 200px;
   }
   .grid-item:active { transform: scale(0.98); }
+  .grid-item.is-expanded { grid-column: span 4; grid-row: span 2; }
 
   .image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: #f4f4f4; }
   .photo-content { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; }
 
-  .grid-item.is-expanded { grid-column: span 4; grid-row: span 2; }
-
-  /* =========================================
-     沉浸式 Overlay 排版 (都在照片内部)
-     ========================================= */
-/* =========================================
-     核心修复：默认完全透明，只有放大时才浮现
-     ========================================= */
+  /* 沉浸式 Overlay (数据面板与准星) */
   .detail-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    
+    display: flex; justify-content: space-between; align-items: flex-start;
     font-family: monospace; font-size: 11px; letter-spacing: 0.05em;
     color: #fff; mix-blend-mode: difference; z-index: 10;
-    pointer-events: none; /* 防止遮挡点击 */
-    
-    /* 👇 关键的两行代码：默认隐藏，加入平滑过渡动画 👇 */
-    opacity: 0; 
-    transition: opacity 0.4s ease; 
+    pointer-events: none; 
+    opacity: 0; transition: opacity 0.4s ease; 
   }
 
-  /* 👇 关键逻辑：当卡片被添加 is-expanded 类名（被点击展开）时，透明度变为 1 👇 */
-  .grid-item.is-expanded .detail-overlay {
-    opacity: 1;
-  }
+  .grid-item.is-expanded .detail-overlay { opacity: 1; }
 
-  /* 左上角组 */
   .overlay-top-left { display: flex; flex-direction: column; gap: 4px; }
   .project-identity { display: flex; gap: 10px; font-weight: bold; text-transform: uppercase;}
   .photo-id { opacity: 0.6; }
-  /* [Project] 样式已注销 */
 
-  /* 右上角组 */
   .overlay-top-right { text-align: right; display: flex; flex-direction: column; gap: 10px; }
   .location-tag {
     background: #fff; color: #000; mix-blend-mode: normal;
     padding: 2px 6px; font-weight: bold; display: inline-block;
     align-self: flex-end; border-radius: 1px;
   }
-  /* data-list 样式已废弃 */
 
-  /* 准星 */
   .corner-bracket { position: absolute; width: 12px; height: 12px; border: 1px solid #fff; opacity: 0; transition: opacity 0.3s; }
   .grid-item.is-expanded .corner-bracket { opacity: 0.8; }
   .tl { top: 15px; left: 15px; border-right: 0; border-bottom: 0; }
@@ -232,6 +210,7 @@ const groupedProjects = CONTINENTS.map(continent => {
   .bl { bottom: 15px; left: 15px; border-right: 0; border-top: 0; }
   .br { bottom: 15px; right: 15px; border-left: 0; border-top: 0; }
 
+  /* 响应式调整 */
   @media (max-width: 1024px) {
     .in-place-grid { 
       grid-template-columns: repeat(4, 1fr); 
@@ -243,12 +222,13 @@ const groupedProjects = CONTINENTS.map(continent => {
 </style>
 
 <script is:inline>
-  const initPhotography = () => {
+  // 将所有的逻辑直接注入 Astro 的转场生命周期
+  document.addEventListener('astro:page-load', () => {
     const grid = document.getElementById('photo-grid');
-    if (!grid) return;
+    if (!grid) return; // 确保仅在此页面运行
 
-    // 1. 黑圆点交互
-    grid.addEventListener('mouseover', (e) => {
+    // 1. 光标放大反馈 (使用 onmouseover/out 覆盖绑定，防重复)
+    grid.onmouseover = (e) => {
       const cursor = document.getElementById('global-cursor');
       if (e.target.closest('.grid-item') && cursor) {
         cursor.style.width = '40px';
@@ -256,9 +236,9 @@ const groupedProjects = CONTINENTS.map(continent => {
         cursor.style.mixBlendMode = 'difference';
         cursor.style.backgroundColor = '#fff';
       }
-    });
+    };
 
-    grid.addEventListener('mouseout', (e) => {
+    grid.onmouseout = (e) => {
       const cursor = document.getElementById('global-cursor');
       if (e.target.closest('.grid-item') && cursor) {
         cursor.style.width = '12px';
@@ -266,42 +246,48 @@ const groupedProjects = CONTINENTS.map(continent => {
         cursor.style.mixBlendMode = 'normal';
         cursor.style.backgroundColor = '#000';
       }
-    });
+    };
 
-    // 2. 点击推挤放大
-    grid.addEventListener('click', (e) => {
+    // 2. 网格点击展开交互 (核心修复：直接赋值 onclick)
+    grid.onclick = (e) => {
+      // 如果点击的是链接（避免与跳转冲突），则不处理
+      if(e.target.tagName === 'A') return;
+
       const item = e.target.closest('.grid-item');
       if (!item) return;
 
       const isExpanded = item.classList.contains('is-expanded');
 
-      // 关闭当前所有已展开项
+      // 无论如何，先强制关闭所有已展开的卡片
       document.querySelectorAll('.grid-item.is-expanded').forEach(el => {
         el.classList.remove('is-expanded');
       });
 
+      // 如果当前卡片原本没有展开，则展开它并居中
       if (!isExpanded) {
         item.classList.add('is-expanded');
-        // 延迟滚动居中
         setTimeout(() => {
           item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+        }, 50); // 稍微加快了滚动的响应速度
       }
-    });
+    };
 
-    // 3. 目录联动
+    // 3. 目录联动 (同理覆盖 onclick)
     document.querySelectorAll('.project-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        const targetId = link.getAttribute('href').substring(1);
+      link.onclick = (e) => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
+        
+        const targetId = href.substring(1);
         const targetItem = document.getElementById(targetId);
+        
         if (targetItem) {
+          // 清除其他展开态
           document.querySelectorAll('.grid-item.is-expanded').forEach(el => el.classList.remove('is-expanded'));
+          // 展开目标态
           targetItem.classList.add('is-expanded');
         }
-      });
+      };
     });
-  };
-
-  initPhotography();
-  document.addEventListener('astro:page-load', initPhotography);
+  });
 </script>

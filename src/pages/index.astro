@@ -3,15 +3,9 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="DEMOS." isHome={true}></>
+<Base title="DEMOS." isHome={true}>
   <main class="home">
     
-    <nav class="nav">
-      <a href="/architecture" class="nav-link">ARCHITECTURE</a>
-      <a href="/photography" class="nav-link">PHOTOGRAPHY</a>
-      <a href="/writings" class="nav-link">WRITINGS</a>
-    </nav>
-
     <div class="hero-wrapper">
       
       <div class="bg-card-container">
@@ -22,11 +16,18 @@ import Base from '../layouts/Base.astro';
       </div>
 
       <section class="hero-content">
-        <h1 class="hero-title">DEMOS.</h1>
+        <a href="/contact" class="hero-link">
+          <h1 class="hero-title">DEMOS.</h1>
+        </a>
         <p class="hero-subtitle">DEMOSTRATE, DEMOLISH, "DEMOS".</p>
       </section>
 
     </div>
+
+    <nav class="home-nav">
+      <a href="/architecture" class="home-pill">ARCHITECTURE</a>
+      <a href="/photography" class="home-pill">PHOTOGRAPHY</a>
+    </nav>
 
   </main>
 </Base>
@@ -35,54 +36,52 @@ import Base from '../layouts/Base.astro';
   .home {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    background-color: var(--color-bg); /* 确保网页背景是纯白 */
+    background-color: var(--color-bg, #ffffff);
+    overflow: hidden;
   }
 
   /* =========================================
-     1. 包装层：由文字内容撑开大小
+     1. 包装层 (约束 3D 卡片与文字)
      ========================================= */
   .hero-wrapper {
     position: relative;
-    display: inline-block;
-    padding: var(--space-xl) var(--space-xl); /* 控制卡片边缘超出文字多少 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4.5rem 3.5rem; /* 给 3D 卡片留出精确的边缘空间 */
+    z-index: 10;
   }
 
   /* =========================================
-     2. 3D 卡片：绝对定位，填满包装层
+     2. 3D 旋转卡片
      ========================================= */
   .bg-card-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     perspective: 1500px;
     z-index: 0;
     pointer-events: none;
   }
 
   .bg-card {
-    width: 100%;
-    height: 100%;
-    position: relative;
+    width: 100%; height: 100%; position: relative;
     transform-style: preserve-3d;
     animation: flip-card 12s infinite linear;
   }
 
   .bg-card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+    position: absolute; width: 100%; height: 100%;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border-radius: 20px; /* 稍微硬朗一点的圆角 */
-    border: 1px solid var(--color-fg);
+    border-radius: 20px;
+    border: 1px solid var(--color-fg, #000);
   }
 
-  /* 正面：白底黑线 */
   .bg-card-front {
     background-color: #ffffff;
     background-image: 
@@ -92,7 +91,6 @@ import Base from '../layouts/Base.astro';
     transform: rotateY(0deg) translateZ(1px);
   }
 
-  /* 反面：黑底灰线 */
   .bg-card-back {
     background-color: #000000;
     border-color: #333;
@@ -109,61 +107,123 @@ import Base from '../layouts/Base.astro';
   }
 
   /* =========================================
-     3. 核心效果：文字取反 (Mix Blend Mode)
+     3. 取反文字特效 (绝对居中优化 + 视觉补偿)
      ========================================= */
   .hero-content {
     position: relative;
     z-index: 10;
-    text-align: center;
-    pointer-events: none;
-    /* 关键：设置混合模式 */
-    mix-blend-mode: difference; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem; 
+    mix-blend-mode: difference;
+    pointer-events: none; 
+  }
+
+  .hero-link {
+    pointer-events: auto; 
+    display: inline-block;
+    text-decoration: none;
   }
 
   .hero-title {
-    /* 必须设为纯白色，混合模式才会生效产生“取反”效果 */
     color: #ffffff; 
-    font-size: var(--text-hero, clamp(4rem, 12vw, 12rem));
-    font-weight: 400;
-    letter-spacing: -0.04em;
+    font-size: clamp(4rem, 15vw, 10rem); 
+    font-weight: 900;
+    letter-spacing: -0.05em;
     line-height: 0.8;
     margin: 0;
-    /* 移除之前的阴影，阴影会干扰混合模式 */
-    text-shadow: none; 
+    transition: opacity 0.3s ease;
+    /* 🌟 核心修复1：抵消句号重量造成的视觉偏左 */
+    transform: translateX(0.08em); 
+  }
+
+  .hero-link:hover .hero-title {
+    opacity: 0.8; 
   }
 
   .hero-subtitle {
-    color: #ffffff; /* 同样设为白色 */
-    margin-top: var(--space-md);
-    font-size: var(--text-lg);
+    color: #ffffff;
+    margin: 0; 
+    font-size: 1rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
+    line-height: 1;
+    /* 🌟 核心修复2：副标题视觉居中微调 */
+    transform: translateX(0.075em); 
   }
 
   /* =========================================
-     其他 UI 元素
+     4. 胶囊导航 (默认：桌面端右上角)
      ========================================= */
-  .nav {
-    position: absolute;
-    top: var(--space-md);
-    right: var(--space-md);
+  .home-nav {
+    position: absolute; 
+    top: var(--space-md, 2rem);
+    right: var(--space-md, 2rem);
     z-index: 100;
     display: flex;
-    gap: var(--space-md);
+    flex-direction: row;
+    gap: 1rem;
   }
 
-  .nav-link {
-    font-size: var(--text-xs);
-    letter-spacing: 0.1em;
+  .home-pill {
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    border: 2px solid var(--color-fg); 
+    border: 1px solid #000;
     border-radius: 9999px;
-    padding: 0.4rem 1.2rem;
+    padding: 0.5rem 1.5rem;
+    background-color: #fff;
+    color: #000;
+    text-decoration: none;
     transition: all 0.3s ease;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
   }
 
-  .nav-link:hover {
-    background-color: var(--color-fg);
-    color: var(--color-bg);
+  .home-pill:hover {
+    background-color: #000;
+    color: #fff;
+  }
+
+  /* =========================================
+     5. 手机端专项布局重构
+     ========================================= */
+  @media (max-width: 768px) {
+    /* 🌟 核心修复3：去掉强制宽度，改用自适应包裹 */
+    .hero-wrapper {
+      padding: 3rem 1.5rem; /* 减小左右内边距，让卡片变窄、修长 */
+      /* width: 90%; <-- 已删除这行“罪魁祸首” */
+    }
+    
+    .hero-title {
+      font-size: 18vw; 
+    }
+
+    .hero-subtitle {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* 手机端胶囊导航：到底部，变上下排列 */
+    .home-nav {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin-top: 2.5rem; 
+      flex-direction: column; 
+      align-items: center;
+      gap: 0.8rem;
+      z-index: 20;
+    }
+
+    .home-pill {
+      font-size: 0.75rem;
+      padding: 0.5rem 2rem; 
+      min-width: 160px; 
+      text-align: center;
+    }
   }
 </style>
