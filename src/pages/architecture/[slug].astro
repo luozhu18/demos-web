@@ -45,13 +45,13 @@ const galleryImages = await Promise.all(projectImageResolvers);
             
             {entry.data.coverImage && (
               <Image 
-  src={entry.data.coverImage} 
-  alt={entry.data.name} 
-  class="detail-main-img" 
-  width={1920} 
-  format="webp" 
-  quality={80} 
-/>
+                src={entry.data.coverImage} 
+                alt={entry.data.name} 
+                class="detail-main-img zoomable" 
+                width={1920} 
+                format="webp" 
+                quality={80} 
+              />
             )}
           </div>
           
@@ -81,14 +81,14 @@ const galleryImages = await Promise.all(projectImageResolvers);
                   <div class="corner-bracket bl"></div>
                   <div class="corner-bracket br"></div>
                   
-                  <Image <Image 
-  src={img.default} 
-  alt={`Detail ${index + 1}`} 
-  class="gallery-img" 
-  width={1920} 
-  format="webp" 
-  quality={80} 
-/>
+                  <Image 
+                    src={img.default} 
+                    alt={`Detail ${index + 1}`} 
+                    class="gallery-img zoomable" 
+                    width={1920} 
+                    format="webp" 
+                    quality={80} 
+                  />
                   
                   <div class="gallery-caption">
                      FIG {String(entry.data.id).padStart(2, '0')}.{String(index + 1).padStart(2, '0')}
@@ -106,18 +106,32 @@ const galleryImages = await Promise.all(projectImageResolvers);
   </main>
 </Base>
 
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" is:inline></script>
+<script is:inline>
+  // 配合 Astro 的无缝路由，确保每次进入页面都能激活放大功能
+  document.addEventListener('astro:page-load', () => {
+    if (window.mediumZoom) {
+      mediumZoom('.zoomable', {
+        margin: 20,
+        background: '#ffffff', // 放大时的背景色
+      });
+    }
+  });
+</script>
+
 <style>
+  /* =========================================
+     全局与桌面端样式
+     ========================================= */
   .detail-container {
     width: 80%;
-    /* 核心修复：第一个值 180px 就是顶部的安全距离，和目录页保持绝对一致 */
     padding: 180px var(--space-md) 5rem var(--space-md); 
     margin: 0 auto;
   }
 
   .ticket-group-detail { display: flex; flex-direction: column; }
-  .ticket-gap { height: 12px; } /* 撕裂缝隙 */
+  .ticket-gap { height: 12px; } 
 
-  /* 双层倒角边框 */
   .ticket-outer-border {
     background-color: var(--color-fg);
     padding: 1px;
@@ -128,7 +142,6 @@ const galleryImages = await Promise.all(projectImageResolvers);
     clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
   }
 
-  /* 顶部 Header */
   .card-header-detail {
     display: flex; justify-content: space-between;
     padding: var(--space-md);
@@ -136,30 +149,26 @@ const galleryImages = await Promise.all(projectImageResolvers);
     font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
   }
 
-  /* =========================================
-     核心修复 1：封面图适应比例
-     ========================================= */
   .main-image-wrapper { 
     position: relative; 
     margin: var(--space-md); 
     padding: 15px; 
-    /* 去掉了所有固定高度或比例限制 */
   }
+  
   .detail-main-img { 
     width: 100%; 
-    height: auto; /* 绝对尊重原始比例 */
+    height: auto; 
     display: block; 
-    border: 1px solid #eee; /* 可选的极其微弱的内边框 */
+    border: 1px solid #eee; 
+    cursor: zoom-in; /* 提示用户可点击放大 */
   }
 
-  /* 四角准星 */
   .corner-bracket { position: absolute; width: 20px; height: 20px; border: 1px solid var(--color-fg); }
   .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
   .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
   .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
   .br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
 
-  /* 第一票根的收尾区域：标题与描述 */
   .project-intro { 
     padding: 0 var(--space-md) var(--space-md) var(--space-md); 
   }
@@ -177,49 +186,103 @@ const galleryImages = await Promise.all(projectImageResolvers);
     line-height: 1.5;
   }
 
-  /* =========================================
-     核心修复 2：画廊图纸自然排版
-     ========================================= */
   .bottom-part-detail { padding: var(--space-md); min-height: 400px; }
   .prose {
     font-size: 1rem;
     line-height: 1.6;
     color: #333;
     margin-bottom: var(--space-xl);
-    
-    /* 核心修改：强制左对齐 */
     text-align: left; 
-    
-    /* 核心修改：保护文字阅读体验 */
-    max-width: 900px; /* 单独限制文字的最宽范围，保证眼睛舒服。下方的图片不受此限制，依然会满宽 */
+    max-width: 900px; 
   }
   .auto-gallery {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xl); /* 每张图纸之间的呼吸空间 */
+    gap: var(--space-xl);
   }
 
   .gallery-item {
     position: relative;
-    padding: 15px; /* 给准星留出空间 */
-    /* 不设高度，完全由内部图片撑开 */
+    padding: 15px; 
   }
 
   .gallery-img {
-    width: 100%; /* 占满容器宽度 */
-    height: auto; /* 高度根据宽度自动等比缩放，绝不裁剪 */
+    width: 100%; 
+    height: auto; 
     display: block;
-    background-color: #fcfcfc; /* 防止透明 PNG 显示突兀 */
+    background-color: #fcfcfc; 
+    cursor: zoom-in; /* 提示用户可点击放大 */
   }
 
   .gallery-caption {
     margin-top: 10px;
     font-size: 0.7rem;
-    font-family: monospace;
     color: var(--color-muted);
     text-align: right;
     letter-spacing: 0.1em;
   }
 
   .footer-dots { text-align: center; opacity: 0.2; letter-spacing: 10px; margin-top: 3rem; }
-</style>s
+
+  /* 🌟 确保放大的图片层级最高，不会被导航栏遮挡 */
+  :global(.medium-zoom-overlay),
+  :global(.medium-zoom-image--opened) {
+    z-index: 99999 !important;
+  }
+
+  /* =========================================
+     手机端专属适配
+     ========================================= */
+  /* =========================================
+     🌟 手机端专属适配 (完全同步菜单页字号) 🌟
+     ========================================= */
+  /* =========================================
+     🌟 手机端专属适配 (完全同步菜单页字号) 🌟
+     ========================================= */
+  @media (max-width: 768px) {
+    .detail-container {
+      width: 100%;
+      padding: 100px 12px 24px 12px; 
+    }
+
+    .card-header-detail { padding: 12px; font-size: 0.6rem !important; line-height: 1.2; }
+    .main-image-wrapper { margin: 12px; padding: 10px; }
+    .project-intro { padding: 0 12px 12px 12px; }
+    .bottom-part-detail { padding: 12px; }
+    
+    .corner-bracket { width: 12px; height: 12px; }
+
+    /* 🌟 标题字号适度放大 🌟 */
+    .project-title-large { 
+      font-size: 1.1rem !important; 
+      margin-bottom: 0.6rem !important;
+      letter-spacing: -0.02em !important;
+      line-height: 1.2 !important;
+    }
+
+    /* 🌟 正文字号适度放大，保持方块对齐 🌟 */
+    .project-desc-large, .prose {
+      font-size: 0.65rem !important; 
+      line-height: 1.4 !important; 
+      letter-spacing: -0.03em !important; 
+      word-spacing: -0.04em !important; 
+      text-align: justify !important;
+      text-justify: inter-word !important; 
+      hyphens: auto !important;
+      -webkit-hyphens: auto !important;
+      width: 100% !important; 
+      max-width: 100% !important; 
+      margin-bottom: 1.5rem !important;
+    }
+
+    .gallery-item { padding: 10px; }
+    .auto-gallery { gap: 1rem; }
+
+    /* 图片下方的 FIG 角标稍微调大一点点 */
+    .gallery-caption {
+      font-size: 0.5rem !important; 
+      margin-top: 6px !important;
+      letter-spacing: 0.05em !important;
+    }
+  }
+</style>

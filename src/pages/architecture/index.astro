@@ -11,11 +11,9 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
 <Base title="Architecture - DEMOS.">
   <main class="container">
   
-
     <section class="tech-grid">
       {projects.map((proj) => (
         
-        /* 核心：整个卡片组是一个链接，内部通过 gap 切开成两半 */
         <a href={`/architecture/${proj.id}`} class="tech-ticket-group">
           
           <div class="ticket-outer-border">
@@ -51,13 +49,13 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
                 <h2 class="project-title">{proj.data.title}</h2>
                 <p class="project-desc">{proj.data.description}</p>
               </div>
+              
               <div class="more-dots">······</div>
               
             </div>
           </div>
 
         </a>
-
       ))}
     </section>
     
@@ -65,22 +63,13 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
 </Base>
 
 <style>
+  /* =========================================
+     全局与桌面端样式
+     ========================================= */
   .container {
-    /* 将顶部的内边距强制设为 180px，右、下、左保持原样 */
     padding: 120px var(--space-md) var(--space-md) var(--space-md); 
     min-height: 100vh;
     background-color: var(--color-bg);
-  }
-
-  .nav-top {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: var(--space-xl);
-  }
-  .nav-link {
-    font-size: var(--text-xs);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
   }
 
   .tech-grid {
@@ -89,33 +78,22 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
     gap: var(--space-md);
   }
 
-  /* =========================================
-     联动票据组 (控制上下票据的间隙)
-     ========================================= */
   .tech-ticket-group {
     display: flex;
     flex-direction: column;
-    /* 核心：物理切开的间隙，这就是图示中间断开的部分 */
     gap: 8px; 
     text-decoration: none;
     color: var(--color-fg);
     transition: transform 0.2s ease;
   }
 
-  /* 鼠标悬停时，上下两部分作为一个整体浮起 */
   .tech-ticket-group:hover {
     transform: translateY(-5px);
   }
 
-  /* =========================================
-     双层倒角边框魔法 (四个角全部切除)
-     ========================================= */
-  
-  /* 黑色外壳：充当 1px 边框 */
   .ticket-outer-border {
     background-color: var(--color-fg); 
-    padding: 1px; /* 边框粗细 */
-    /* 八边形剪裁：四个角均倒角 12px */
+    padding: 1px; 
     clip-path: polygon(
       12px 0, calc(100% - 12px) 0, 
       100% 12px, 100% calc(100% - 12px), 
@@ -124,10 +102,8 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
     );
   }
 
-  /* 白色内卡片：露出黑色边框 */
   .ticket-inner-bg {
     height: 100%;
-    /* 内层倒角比外层小 1px，完美对齐 */
     clip-path: polygon(
       11px 0, calc(100% - 11px) 0, 
       100% 11px, 100% calc(100% - 11px), 
@@ -136,15 +112,9 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
     );
   }
 
-  /* 上半部背景为纯白 */
   .top-part { background-color: var(--color-bg); }
-  /* 下半部背景稍微加深一点点，增加层次感 */
   .bottom-part { background-color: #fafafa; }
 
-  /* =========================================
-     内部排版格式 (保持原样)
-     ========================================= */
-  
   .card-header {
     display: flex;
     justify-content: space-between;
@@ -155,6 +125,7 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
     line-height: 1.4;
     text-transform: uppercase;
   }
+  
   .text-right { text-align: right; }
 
   .card-body {
@@ -165,10 +136,7 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
   }
   
   .corner-bracket {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border: 1px solid var(--color-fg);
+    position: absolute; width: 12px; height: 12px; border: 1px solid var(--color-fg);
   }
   .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
   .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
@@ -179,33 +147,36 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
   .proj-img { width: 100%; height: 100%; object-fit: cover; }
   .img-placeholder { width: 100%; height: 100%; background-color: #f4f4f4; }
 
-  /* 底部文字票据排版 */
   .bottom-part {
     padding: var(--space-sm);
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    gap: 15px; 
   }
 
-  .footer-text { max-width: 85%; }
+  .footer-text { 
+    flex: 1; 
+  }
+  
   .project-title {
     font-size: var(--text-lg);
-    font-weight: 500;
-    margin: 0 0 var(--space-xs) 0;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
     text-transform: uppercase;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.5em;
+    letter-spacing: -0.05em;
   }
+  
   .project-desc {
     font-size: 0.75rem; 
-    line-height: 1.5;
-    /* 2. 强制两端对齐，形成完美的方块 */
+    line-height: 1.35; 
+    letter-spacing: -0.04em; 
+    word-spacing: -0.05em; 
     text-align: justify;
-    text-justify: inter-word; /* 告诉浏览器优先拉伸单词之间的空格 */
-    
-    /* 3. 开启自动连字符（极度重要！防止等宽字体出现巨大牙缝） */
+    text-justify: inter-word; 
     hyphens: auto;
     -webkit-hyphens: auto;
+    margin: 0; 
   }
   
   .more-dots {
@@ -216,6 +187,46 @@ const projects = allProjects.sort((a, b) => parseInt(String(a.data.id)) - parseI
     padding-bottom: 4px;
   }
 
-  @media (max-width: 1024px) { .tech-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 768px) { .tech-grid { grid-template-columns: 1fr; } }
+  /* =========================================
+     响应式适配 (平板与手机)
+     ========================================= */
+  @media (max-width: 1024px) { 
+    .tech-grid { grid-template-columns: repeat(2, 1fr); } 
+  }
+
+  /* =========================================
+     🌟 手机端专属适配 (适度放大，兼顾阅读体验)
+     ========================================= */
+  @media (max-width: 768px) { 
+    .container {
+      padding: 80px 12px 24px 12px; 
+    }
+
+    .tech-grid { 
+      grid-template-columns: 1fr; 
+      gap: 1.2rem; 
+    }
+
+    .card-header {
+      font-size: 0.6rem; /* 稍微放大顶部标签 */
+      line-height: 1.2;
+    }
+
+    .project-title {
+      font-size: 1.1rem; /* 标题放大到 1.1rem */
+      margin-bottom: 0.6rem;
+    }
+
+    .project-desc {
+      font-size: 0.65rem; /* 正文放大，阅读更舒适 */
+      line-height: 1.4; /* 行高稍微调松，防拥挤 */
+      letter-spacing: -0.03em; 
+      word-spacing: -0.04em;
+    }
+
+    .more-dots {
+      font-size: 8px; 
+      letter-spacing: 2px;
+    }
+  }
 </style>

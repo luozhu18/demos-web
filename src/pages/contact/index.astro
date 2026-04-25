@@ -13,65 +13,47 @@ import Base from '../../layouts/Base.astro';
     </section>
 
     <section class="bottom-archive-section">
-      
-      <p class="system-log">
-        ORBITAL STATION LOGGING PROTOCOL. DAILY REPETITION ENSURES STRUCTURAL INTEGRITY. ALL DATA IS RECORDED AND ARCHIVED IN PERPETUITY. MAINTAIN TRAJECTORY.
-        <span style="float: right;">&rarr;</span>
-      </p>
-
       <div class="archive-table">
-        <div class="contact-cell">
-          <h2 class="contact-title">CONTACT<br>MANIFEST</h2>
-          <div class="contact-details">
-            <div class="detail-item">
-              <span class="label">NAME :</span>
-              <span class="value">[ WANG YIRAN ]</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">EMAIL :</span>
-              <span class="value">[ demiarchi18@163.com ]</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">INSTAGRAM :</span>
-              <span class="value">@s</span>
-            </div>
+        
+        <div class="manifest-cell">
+          <h2 class="section-title">MANIFEST</h2>
+          <div class="manifest-text">
+            <p><strong>"Demos"</strong> (pronounced DEM-ohs) refers to the common people—the populace, the citizenry—rooted in ancient Greek political thought.</p>
+            
+            <p><strong>Demonstrate</strong> is to explain, to prove, and to reveal. Through each project, I aim to observe, analyze, and respond to society and everyday life. I am interested in how space organizes behavior, and how images capture the subtle yet tangible tensions of reality. Every design becomes a form of argument: about how we live, how we relate, and how we make sense of the world around us.</p>
+            
+            <p><strong>Demolish</strong> is to break fixed forms, disrupt habitual rules, and challenge the default acceptance of function, order, and aesthetics. I want my practice to remain grounded in questioning and reinvention—to continually dismantle inherited frameworks and search, within fractures and fragments, for new languages and new possibilities.</p>
+            
+            <p><strong>DEMOS</strong> is more than a name; it is a position. It speaks to the people, the public, and the individual within society. For me, it means that every act of making must begin with the human. What matters is not only form, space, or image itself, but how people live within them, how they are shaped by them, and how they relate to one another and to broader social structures.</p>
           </div>
         </div>
 
-        <div class="nav-cell">
-          <div class="table-row table-header">
-            <div class="col-main">PARAMETER / TARGET</div>
-            <div class="col-sm">M</div>
-            <div class="col-sm">T</div>
-            <div class="col-sm">W</div>
-            <div class="col-sm">YLD</div>
-          </div>
-          
-          <div class="table-row">
-            <div class="col-main">COMMUNICATION UPLINK</div>
-            <div class="col-sm">■</div><div class="col-sm">■</div><div class="col-sm">□</div>
-            <div class="col-sm">.98</div>
-          </div>
-          
-          <div class="table-row">
-            <div class="col-main">COORDINATE SYNC</div>
-            <div class="col-sm">■</div><div class="col-sm">□</div><div class="col-sm">■</div>
-            <div class="col-sm">.42</div>
+        <div class="contact-cell">
+          <h2 class="section-title">CONTACT</h2>
+          <div class="manifest-text contact-list">
+            <p><strong>NAME</strong> [ WANG YIRAN ]</p>
+            <p><strong>EMAIL</strong> [ demiarchi18@163.com ]</p>
+            <p><strong>INSTAGRAM</strong> @s</p>
           </div>
         </div>
+
       </div>
     </section>
+    
   </main>
 </Base>
 
 <style>
+  /* =========================================
+     全局容器与巨型 Logo 样式
+     ========================================= */
   .contact-page-wrapper {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 180px var(--space-md) 5rem var(--space-md);
-    background-color: #f4f4f4;
+    background-color: #f4f4f4; 
   }
 
   .mega-title-section {
@@ -80,75 +62,133 @@ import Base from '../../layouts/Base.astro';
     display: flex;
     justify-content: center;
     overflow: hidden;
+    margin-bottom: 2rem;
   }
 
   .mega-title {
-    font-size: clamp(5rem, 20vw, 25rem);
+    font-size: clamp(5rem, 22vw, 25rem); 
     font-weight: 900;
     line-height: 0.8;
     margin: 0;
     letter-spacing: -0.06em;
     text-transform: uppercase;
-    color: #000;
+    color: var(--color-fg);
   }
 
   .cut-line {
     position: absolute;
-    left: 0; width: 100%; height: 1.2vw;
-    background-color: #f4f4f4;
+    left: 0; 
+    width: 100%; 
+    height: 6.5%; /* 完美的绝对等比切割线 */
+    background-color: #f4f4f4; 
     z-index: 1;
   }
-  .top-line { top: 38%; }
-  .bottom-line { top: 62%; }
+  .top-line { top: 37%; }
+  .bottom-line { top: 61%; }
 
-  .system-log {
-    max-width: 600px;
-    font-size: 11px;
-    line-height: 1.4;
-    margin-bottom: 2rem;
-    font-family: monospace;
+  /* =========================================
+     下半部排版：MANIFEST (左 2) + CONTACT (右 1)
+     ========================================= */
+  .archive-table {
+    display: grid;
+    grid-template-columns: 2fr 1fr; 
+    width: 100%;
+    border: 1px solid var(--color-fg);
   }
 
-  .archive-table {
-    display: flex;
-    width: 100%;
-    border: 1px solid #000;
-    font-family: monospace;
+  .manifest-cell {
+    padding: 2.5rem;
+    border-right: 1px solid var(--color-fg);
   }
 
   .contact-cell {
-    flex: 1;
     padding: 2.5rem;
-    border-right: 1px solid #000;
   }
 
-  .contact-title {
+  .section-title {
     font-size: 3rem;
     font-weight: 900;
     line-height: 0.9;
-    margin: 0 0 3rem 0;
+    margin: 0 0 2.5rem 0;
+    text-transform: uppercase;
   }
 
-  .contact-details {
+  /* =========================================
+     共有正文样式 (黑底白字高亮)
+     ========================================= */
+  .manifest-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  .manifest-text p {
+    margin-bottom: 1.5rem;
+  }
+  .manifest-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* 黑底白字标签 */
+  .manifest-text strong {
+    background-color: var(--color-fg);
+    color: var(--color-bg);
+    padding: 0 6px;
+    margin-right: 4px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     右侧专属间距：均匀撑满红框
+     ========================================= */
+  .contact-list {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 2.5rem; /* 增大间距，让这三行字均匀分布占据红框高度 */
   }
-  .detail-item { display: flex; gap: 1rem; font-size: 13px; }
-  .label { color: #666; }
 
-  .nav-cell { flex: 1.5; display: flex; flex-direction: column; }
-  .table-row { display: flex; border-bottom: 1px solid #000; }
-  .table-row:last-child { border-bottom: none; }
-  .table-header { font-weight: bold; background: #eee; }
-  
-  .col-main { flex: 2; padding: 1rem; border-right: 1px solid #000; }
-  .col-sm { flex: 0.4; padding: 1rem; border-right: 1px solid #000; text-align: center; }
-  .col-sm:last-child { border-right: none; }
+  .contact-list p {
+    margin-bottom: 0; /* 移除段落默认外边距，完全由 gap 控制 */
+    display: flex;
+    align-items: center; /* 确保黑底标签和文字垂直居中对齐 */
+  }
 
+  /* =========================================
+     响应式适配 (平板与手机)
+     ========================================= */
   @media (max-width: 1024px) {
-    .archive-table { flex-direction: column; }
-    .contact-cell { border-right: none; border-bottom: 1px solid #000; }
-    .mega-title { font-size: 15vw; }
+    .archive-table { 
+      grid-template-columns: 1fr; 
+    }
+    .manifest-cell { 
+      border-right: none; 
+      border-bottom: 1px solid var(--color-fg); 
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-page-wrapper {
+      padding: 120px 12px 24px 12px;
+    }
+    .mega-title { 
+      font-size: 25vw; 
+    }
+    .manifest-cell, .contact-cell {
+      padding: 1.5rem;
+    }
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .manifest-text {
+      font-size: 0.75rem;
+    }
+    .contact-list {
+      gap: 1.5rem; /* 手机端适当缩减条目间距 */
+    }
   }
 </style>
