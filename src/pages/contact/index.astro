@@ -21,9 +21,9 @@ import Base from '../../layouts/Base.astro';
           <h2 class="section-title">MANIFEST</h2>
           <div class="manifest-text" id="typewriter-target">
             <p><strong>"Demos"</strong> (pronounced DEM-ohs) refers to the common people—the populace, the citizenry—rooted in ancient Greek political thought.</p>
-            <p><strong>Demonstrate</strong> is to explain, to prove, and to reveal. Through each project, I aim to observe, analyze, and respond to society and everyday life. I am interested in how space organizes behavior, and how images capture the subtle yet tangible tensions of reality.</p>
-            <p><strong>Demolish</strong> is to break fixed forms, disrupt habitual rules, and challenge the default acceptance of function, order, and aesthetics. I want my practice to remain grounded in questioning and reinvention.</p>
-            <p><strong>DEMOS</strong> is more than a name; it is a position. It speaks to the people, the public, and the individual within society. For me, it means that every act of making must begin with the human.</p>
+            <p><strong>Demonstrate</strong> is to explain, prove, and reveal. Each project engages society and everyday life as sites of observation, analysis, and response, examining how space structures behavior and how images register the latent tensions of reality.</p>
+            <p><strong>Demolish</strong> is to unsettle fixed forms, contest normative conventions, and challenge inherited assumptions of function, order, and aesthetics. Through the dismantling of established frameworks, alternative languages and new spatial possibilities may emerge.</p>
+            <p><strong>DEMOS</strong> is more than a name; it is a position. </p>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ import Base from '../../layouts/Base.astro';
   }
 
   .mega-title {
-    font-size: clamp(4rem, 12vw, 12rem); 
+    font-size: clamp(6rem, 15vw, 15rem); 
     font-weight: 900;
     line-height: 0.8;
     margin: 0;
@@ -83,13 +83,13 @@ import Base from '../../layouts/Base.astro';
   /* 🌟 核心修改 1：占位容器 */
   .spacer {
     flex-grow: 1; /* 自动吸收所有剩余空间 */
-    min-height: 2rem; /* 强制标题和框之间至少有 2rem 的物理距离 */
+    min-height: 1.5rem; /* 强制标题和框之间至少有 2rem 的物理距离 */
   }
 
   /* 底部档案表区域 */
   .bottom-archive-section {
     flex-shrink: 1; /* 内容多时允许缩小 */
-    max-height: 60vh; /* 🌟 核心修改 2：限制框的高度，防止它顶到标题 */
+    max-height: 80vh; /* 🌟 核心修改 2：限制框的高度，防止它顶到标题 */
     display: flex;
     min-height: 0; 
   }
@@ -148,7 +148,7 @@ import Base from '../../layouts/Base.astro';
 
   .contact-list {
     display: flex; flex-direction: column;
-    gap: 1.5rem; overflow: hidden; 
+    gap: 0.6rem; overflow: hidden; 
   }
 
   .contact-list p { margin-bottom: 0; display: flex; align-items: center; }
@@ -171,10 +171,10 @@ import Base from '../../layouts/Base.astro';
     .contact-page-wrapper {
       padding: 90px 12px 12px 12px;
     }
-    .mega-title { font-size: 18vw; }
-    .bottom-archive-section { max-height: 55vh; } /* 进一步压低手机端高度 */
+    .mega-title { font-size: 16vw; }
+    .bottom-archive-section { max-height: 100vh; } /* 进一步压低手机端高度 */
     .manifest-cell, .contact-cell { padding: 1rem; }
-    .section-title { font-size: 1.5rem; margin-bottom: 0.8rem; }
+    .section-title { font-size: 1.2rem; margin-bottom: 0.8rem; }
     .manifest-text { font-size: 0.75rem; }
   }
 </style>
