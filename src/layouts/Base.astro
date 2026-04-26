@@ -22,10 +22,10 @@ const { title, isHome = false } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-
+    
     <style is:global>
       /* =========================================
-         1. 基础重置与强制字体
+         1. 基础重置与强制字体 (Brutalist Reset)
          ========================================= */
       :root {
         --color-bg: #ffffff;
@@ -37,16 +37,10 @@ const { title, isHome = false } = Astro.props;
         --font-main: 'Space Mono', monospace;
       }
 
-      *, *::before, *::after { 
-        box-sizing: border-box; 
-      }
+      *, *::before, *::after { box-sizing: border-box; cursor: none !important;}
 
       html, body, div, p, h1, h2, h3, h4, h5, h6, span, a, li, ul, ol, nav, main, section, article, button, input {
         font-family: var(--font-main) !important;
-      }
-
-      @media (pointer: fine) {
-        * { cursor: none !important; }
       }
       
       html, body { 
@@ -57,10 +51,7 @@ const { title, isHome = false } = Astro.props;
       }
       
       a { text-decoration: none; color: inherit; }
-
-      h1, h2, h3, .brand-name { 
-        letter-spacing: -0.05em; 
-      }
+      h1, h2, h3, .brand-name { letter-spacing: -0.05em; }
 
       .justify-block, .justify-block p, article p, .project-desc p {
         font-size: 0.75rem !important; 
@@ -73,112 +64,149 @@ const { title, isHome = false } = Astro.props;
       }
 
       /* =========================================
-         2. 自定义鼠标光标
+         2. 自定义鼠标光标 (Brutalist Cursor)
          ========================================= */
       #global-cursor {
         position: fixed; top: 0; left: 0;
         width: 12px; height: 12px;
-        background-color: #000; border-radius: 50%;
-        pointer-events: none; z-index: 999999;
+        background-color: var(--color-fg); 
+        border-radius: 50%;
+        pointer-events: none; z-index: 9999999;
         transform: translate(-50%, -50%);
         transition: width 0.2s, height 0.2s, background-color 0.2s;
       }
-
-      @media (max-width: 768px) {
-        #global-cursor { display: none !important; }
+      
+      #global-cursor.cursor-hover {
+        width: 30px; height: 30px;
+        mix-blend-mode: difference;
+        background-color: #fff;
       }
 
+      @media (max-width: 768px) { #global-cursor { display: none !important; } }
+
       /* =========================================
-         3. 导航栏布局重构
+         3. 导航栏布局 (Desktop & Brutalist)
          ========================================= */
       .global-nav {
         position: fixed; top: 0; left: 0; width: 100%; 
         height: var(--nav-height);
-        
-        /* 桌面端：完全透明，去掉模糊效果 */
-        background-color: transparent;
-        backdrop-filter: none;
-        
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-        padding: 0 var(--space-md);
-        z-index: 1200;
+        background-color: transparent; backdrop-filter: none;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 var(--space-md); z-index: 1200;
       }
 
-      .brand-group { 
-        display: flex; 
-        flex-direction: column; 
-        align-items: flex-start; 
+      /* 左侧组合：返回按钮 + Logo */
+      .nav-left { display: flex; align-items: center; gap: var(--space-md); }
+
+      /* 返回按钮桌面端样式：微调 Padding 以适应单字符箭头 */
+      .back-btn {
+        font-family: var(--font-main); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; 
+        border: 1px solid var(--color-fg); border-radius: 999px; padding: 0.3rem 0.8rem; 
+        background-color: var(--color-bg); color: var(--color-fg); transition: all 0.3s ease; 
       }
+      .back-btn:hover { background-color: var(--color-fg); color: var(--color-bg); }
+
+      .brand-group { display: flex; flex-direction: column; align-items: flex-start; }
       .brand-name { font-size: 2.8rem; font-weight: 700; line-height: 0.9; }
       .brand-subtitle { font-size: 0.8rem; letter-spacing: 0.1em; color: var(--color-muted); text-transform: uppercase; margin-top: 4px; }
       
       .desktop-only { display: flex; gap: 0.8rem; }
       
       .nav-pill {
-        font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; 
-        text-transform: uppercase; border: 1px solid var(--color-fg); 
-        border-radius: 999px; padding: 0.5rem 1.2rem; 
-        transition: all 0.3s ease; 
-        background-color: #fff; 
+        font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; 
+        border: 1px solid var(--color-fg); border-radius: 999px; padding: 0.5rem 1.2rem; 
+        transition: all 0.3s ease; background-color: var(--color-bg); 
       }
-      .nav-pill:hover { background-color: var(--color-fg); color: #fff; }
-
+      .nav-pill:hover { background-color: var(--color-fg); color: var(--color-bg); }
       .hamburger-button, .mobile-menu-overlay { display: none; }
 
       /* =========================================
-         4. 手机端适配
+         4. 手机端适配 (Simplified & Blurred)
          ========================================= */
       @media (max-width: 768px) {
         .global-nav { 
-          justify-content: center; 
-          height: 70px; 
-          padding: 0 var(--space-sm);
-          
-          /* 👇 核心修改：仅在手机端恢复白底和毛玻璃模糊效果 👇 */
+          position: fixed; justify-content: center; height: 70px; padding: 0 var(--space-sm);
           background-color: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px); /* 兼容苹果手机 */
+          backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
 
-        .brand-group { 
-          align-items: center; 
+        .nav-left { position: static; }
+
+        /* ✅ 返回按钮：钉在左侧，加大防触边距离 */
+        .back-btn {
+          position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%);
+          padding: 0.2rem 0.6rem; font-size: 0.8rem; border-radius: 999px;
         }
-        
+
+        /* ✅ Logo：绝对居中 */
+        .brand-group { 
+          position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+          align-items: center; justify-content: center;
+        }
         .brand-name { font-size: 2rem; }
         .brand-subtitle { font-size: 0.5rem; text-align: center; }
+        
         .desktop-only { display: none; }
 
+        /* ✅ 汉堡菜单：移动到右侧，同样加大防触边距离 */
         .hamburger-button {
-          display: block; position: absolute; left: var(--space-sm);
-          top: 50%; transform: translateY(-50%);
+          display: block; position: absolute; right: 1.5rem; left: auto; top: 50%; transform: translateY(-50%);
           background: none; border: none; padding: 5px; z-index: 1300;
         }
         .hamburger-box { display: block; width: 20px; height: 14px; position: relative; } 
-        .hamburger-inner { top: 50%; margin-top: -1px; width: 20px; height: 1.5px; background-color: #000; position: absolute; transition: transform 0.2s ease; }
-        .hamburger-inner::before, .hamburger-inner::after { content: ""; width: 20px; height: 1.5px; background-color: #000; position: absolute; transition: transform 0.2s ease; }
-        .hamburger-inner::before { top: -6px; }
-        .hamburger-inner::after { bottom: -6px; }
-
+        .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after { 
+          width: 20px; height: 1.5px; background-color: var(--color-fg); position: absolute; transition: transform 0.2s ease; 
+        }
+        .hamburger-inner { top: 50%; margin-top: -1px; }
+        .hamburger-inner::before { content: ""; top: -6px; }
+        .hamburger-inner::after { content: ""; bottom: -6px; }
         .is-active .hamburger-inner { background-color: transparent; }
         .is-active .hamburger-inner::before { top: 0; transform: rotate(45deg); }
         .is-active .hamburger-inner::after { bottom: 0; transform: rotate(-45deg); }
 
         .mobile-menu-overlay {
-          display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
-          background: var(--color-bg); 
-          z-index: 1050; flex-direction: column; 
-          justify-content: flex-start; align-items: flex-start; 
-          padding-top: 80px; padding-left: var(--space-sm); 
-          opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
+          display: flex; 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; height: 100vh; 
+    background: var(--color-bg); 
+    z-index: 1050; 
+    flex-direction: column; 
+    /* 修改为 flex-end 使内容靠右 */
+    justify-content: flex-start; 
+    align-items: flex-end; 
+    padding-top: 100px; 
+    /* 增加右侧间距，与汉堡菜单对齐 */
+    padding-right: 1.5rem; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.3s ease;
+  }
         .mobile-menu-overlay.is-open { opacity: 1; pointer-events: auto; }
-        .menu-content { display: flex; flex-direction: column; gap: 0.8rem; }
+        .menu-content { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.2rem; 
+    /* 确保内部文字或按钮也右对齐 */
+    align-items: flex-end; 
+  }
         .mobile-menu-link { 
           font-size: 0.75rem; font-weight: 700; border: 1px solid var(--color-fg); 
-          border-radius: 999px; padding: 0.4rem 1rem; background-color: #fff;
+          border-radius: 999px; padding: 0.4rem 1rem; background-color: var(--color-bg);
         }
+        
+      }
+
+      /* =========================================
+         5. 放大镜防卡死 CSS
+         ========================================= */
+      .medium-zoom-overlay { z-index: 999998 !important; }
+      .medium-zoom-image--opened { z-index: 999999 !important; }
+      
+      .ticket-outer-border:has(.medium-zoom-image--opened),
+      .ticket-inner-bg:has(.medium-zoom-image--opened) {
+        clip-path: none !important;
+        z-index: 999999 !important;
       }
     </style>
   </head>
@@ -187,21 +215,25 @@ const { title, isHome = false } = Astro.props;
     <div id="global-cursor"></div>
     
     {!isHome && (
-      <>
+      <header transition:persist="global-header">
         <nav class="global-nav">
-          <button id="mobile-menu-trigger" class="hamburger-button">
-            <span class="hamburger-box"><span class="hamburger-inner"></span></span>
-          </button>
-
-          <a href="/" class="brand-group">
-            <span class="brand-name">DEMOS.</span>
-            <span class="brand-subtitle">DEMOSTRATE, DEMOLISH, "DEMOS".</span>
-          </a>
+          
+          <div class="nav-left">
+            <button id="back-btn" class="back-btn">←</button>
+            <a href="/" class="brand-group">
+              <span class="brand-name">DEMOS.</span>
+              <span class="brand-subtitle">DEMOSTRATE, DEMOLISH, "DEMOS".</span>
+            </a>
+          </div>
 
           <div class="nav-right desktop-only">
             <a href="/architecture" class="nav-pill">ARCHITECTURE</a>
             <a href="/photography" class="nav-pill">PHOTOGRAPHY</a>
           </div>
+
+          <button id="mobile-menu-trigger" class="hamburger-button">
+            <span class="hamburger-box"><span class="hamburger-inner"></span></span>
+          </button>
         </nav>
 
         <div id="mobile-menu-overlay" class="mobile-menu-overlay">
@@ -210,42 +242,97 @@ const { title, isHome = false } = Astro.props;
             <a href="/photography" class="mobile-menu-link">PHOTOGRAPHY</a>
           </div>
         </div>
-      </>
+      </header>
     )}
 
     <slot />
 
     <script is:inline>
-      const initScripts = () => {
+      const cdnUrl = "https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js";
+      
+      const loadZoomAndInit = () => {
+        if (window.mzInstance) {
+          window.mzInstance.detach();
+          window.mzInstance = null;
+        }
+        document.querySelectorAll('.medium-zoom-overlay, .medium-zoom-image--opened').forEach(el => el.remove());
+        const oldScript = document.querySelector(`script[src="${cdnUrl}"]`);
+        if (oldScript) oldScript.remove();
+
+        if (!document.querySelector('.zoomable')) return;
+
+        const newScript = document.createElement('script');
+        newScript.src = cdnUrl;
+        newScript.isInline = true; 
+        
+        newScript.onload = () => {
+          if (typeof mediumZoom === 'function') {
+            const images = document.querySelectorAll('.zoomable');
+            window.mzInstance = mediumZoom(images, { margin: 24, background: '#ffffff' });
+          }
+        };
+        
+        document.head.appendChild(newScript);
+      };
+
+      const updateCursor = () => {
         const cursor = document.getElementById('global-cursor');
-        if (cursor && window.innerWidth > 768) {
+        if (cursor && window.matchMedia('(pointer: fine)').matches) {
           document.onmousemove = (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
           };
-          document.querySelectorAll('a, button').forEach(el => {
-            el.onmouseenter = () => { cursor.style.width = '30px'; cursor.style.height = '30px'; cursor.style.mixBlendMode = 'difference'; cursor.style.backgroundColor = '#fff'; };
-            el.onmouseleave = () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursor.style.mixBlendMode = 'normal'; cursor.style.backgroundColor = '#000'; };
+          document.querySelectorAll('a, button, .zoomable').forEach(el => {
+            el.onmouseenter = () => cursor.classList.add('cursor-hover');
+            el.onmouseleave = () => cursor.classList.remove('cursor-hover');
           });
         }
+      };
 
+      const initMenu = () => {
         const btn = document.getElementById('mobile-menu-trigger');
         const overlay = document.getElementById('mobile-menu-overlay');
         if (btn && overlay) {
-          btn.onclick = () => {
-            btn.classList.toggle('is-active');
-            overlay.classList.toggle('is-open'); 
-          };
-          overlay.onclick = (e) => {
-            if (e.target.tagName === 'A' || e.target === overlay) {
-              overlay.classList.remove('is-open');
-              btn.classList.remove('is-active');
+          btn.onclick = () => { btn.classList.toggle('is-active'); overlay.classList.toggle('is-open'); };
+          overlay.onclick = (e) => { if (e.target.tagName === 'A' || e.target === overlay) { overlay.classList.remove('is-open'); btn.classList.remove('is-active'); } };
+        }
+      };
+
+      const initBackButton = () => {
+        const backBtn = document.getElementById('back-btn');
+        if (backBtn) {
+          backBtn.onclick = () => {
+            const path = window.location.pathname;
+            
+            // 清理路径末尾的斜杠，方便统一判断
+            const cleanPath = path.endsWith('/') && path !== '/' ? path.slice(0, -1) : path;
+            const pathSegments = cleanPath.split('/').filter(Boolean);
+
+            if (pathSegments.length >= 2) {
+              // 1. 如果在详情页 (例如 /architecture/project-a)
+              // 返回到上一级菜单页 (/architecture)
+              window.location.href = '/' + pathSegments[0];
+            } else if (pathSegments.length === 1) {
+              // 2. 如果在菜单页 (例如 /architecture)
+              // 返回到首页 (/)
+              window.location.href = '/';
+            } else {
+              // 3. 已经在首页或其他情况
+              window.location.href = '/';
             }
           };
         }
       };
-      initScripts();
-      document.addEventListener('astro:page-load', initScripts);
+
+      const handleAstroLoad = () => {
+        loadZoomAndInit(); 
+        updateCursor();    
+        initMenu();        
+        initBackButton();  
+      };
+
+      handleAstroLoad(); 
+      document.addEventListener('astro:page-load', handleAstroLoad); 
     </script>
   </body>
 </html>
